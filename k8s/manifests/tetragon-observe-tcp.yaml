@@ -1,0 +1,19 @@
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicyNamespaced
+metadata:
+  name: observe-tcp-connect
+  namespace: security-lab
+spec:
+  options:
+    - name: policy-mode
+      value: monitor
+  kprobes:
+    - call: tcp_connect
+      syscall: false
+      message: Conexion TCP iniciada desde security-lab
+      args:
+        - index: 0
+          type: sock
+      tags:
+        - observability.network
+        - security-lab

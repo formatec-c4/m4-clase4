@@ -1,0 +1,13 @@
+# Variante mínima: sin dependencias de aplicación y con usuario no-root.
+FROM python:3.13-alpine3.22
+
+RUN apk upgrade --no-cache \
+    && addgroup -S app \
+    && adduser -S -G app app
+WORKDIR /app
+
+COPY --chown=app:app app.py ./
+
+USER app
+EXPOSE 8080
+CMD ["python", "app.py"]

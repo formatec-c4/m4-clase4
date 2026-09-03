@@ -1,0 +1,42 @@
+apiVersion: policies.kyverno.io/v1
+kind: MutatingPolicy
+metadata:
+  name: add-seccomp-to-demo
+spec:
+  matchConstraints:
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: security-lab
+    resourceRules:
+      - apiGroups:
+          - apps
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - deployments
+        resourceNames:
+          - mutated-demo
+  mutations:
+    - patchType: JSONPatch
+      jsonPatch:
+        expression: |-
+          [
+            JSONPatch{
+              op: "add",
+              path: "/metadata/labels/" + jsonpatch.escapeKey("security.formatec.io/mutated"),
+              value: "kyverno"
+            },
+            JSONPatch{
+              op: "add",
+              path: "/spec/template/metadata/labels/" + jsonpatch.escapeKey("security.formatec.io/mutated"),
+              value: "kyverno"
+            },
+            JSONPatch{
+              op: "add",
+              path: "/spec/template/spec/securityContext",
+              value: {"seccompProfile": {"type": "RuntimeDefault"}}
+            }
+          ]

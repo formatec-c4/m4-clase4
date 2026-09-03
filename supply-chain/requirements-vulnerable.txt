@@ -1,0 +1,4 @@
+# Dependencias antiguas incluidas deliberadamente para que Trivy encuentre CVEs.
+# La aplicación de ejemplo usa solo la biblioteca estándar de Python.
+requests==2.19.1
+urllib3==1.23

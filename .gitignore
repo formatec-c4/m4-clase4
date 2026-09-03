@@ -1,0 +1,13 @@
+.DS_Store
+**/.DS_Store
+
+# Caché local del laboratorio de imágenes
+supply-chain/.trivy-cache/
+supply-chain/keys/
+
+# Archivos temporales
+*.log
+*.tmp
+*.inspect.ndjson
+**/__pycache__/
+*.pyc

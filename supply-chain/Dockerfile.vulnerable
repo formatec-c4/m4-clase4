@@ -1,0 +1,13 @@
+# Imagen deliberadamente antigua e insegura: se usa para observar el rechazo de Trivy.
+FROM python:3.11.0-slim-bullseye
+
+WORKDIR /app
+
+COPY requirements-vulnerable.txt ./
+RUN pip install --no-cache-dir -r requirements-vulnerable.txt
+
+COPY app.py ./
+
+# Mala práctica intencional: el proceso queda ejecutándose como root.
+EXPOSE 8080
+CMD ["python", "app.py"]

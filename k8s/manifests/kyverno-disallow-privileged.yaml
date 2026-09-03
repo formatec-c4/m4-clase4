@@ -1,0 +1,38 @@
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: disallow-privileged-deployments
+  annotations:
+    policies.kyverno.io/title: Disallow Privileged Containers
+    policies.kyverno.io/category: Pod Security Standards (Baseline)
+    policies.kyverno.io/severity: medium
+spec:
+  validationActions:
+    - Deny
+  evaluation:
+    background:
+      enabled: true
+  matchConstraints:
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: security-lab
+    resourceRules:
+      - apiGroups:
+          - apps
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - deployments
+  variables:
+    - name: allContainers
+      expression: >-
+        object.spec.template.spec.containers +
+        object.spec.template.spec.?initContainers.orValue([])
+  validations:
+    - expression: >-
+        variables.allContainers.all(container,
+        container.?securityContext.?privileged.orValue(false) == false)
+      message: Los Deployments privilegiados estan bloqueados por Kyverno.

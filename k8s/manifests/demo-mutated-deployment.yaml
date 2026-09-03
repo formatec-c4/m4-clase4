@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mutated-demo
+  namespace: security-lab
+  labels:
+    app: mutated-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mutated-demo
+  template:
+    metadata:
+      labels:
+        app: mutated-demo
+    spec:
+      containers:
+        - name: web
+          image: nginxinc/nginx-unprivileged:1.29-alpine
+          ports:
+            - containerPort: 8080

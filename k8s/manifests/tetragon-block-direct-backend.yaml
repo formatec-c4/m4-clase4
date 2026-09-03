@@ -1,0 +1,24 @@
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicyNamespaced
+metadata:
+  name: block-direct-backend
+  namespace: security-lab
+spec:
+  options:
+    - name: policy-mode
+      value: enforce
+  kprobes:
+    - call: security_socket_connect
+      syscall: false
+      args:
+        - index: 1
+          type: sockaddr
+      selectors:
+        - matchArgs:
+            - index: 1
+              operator: SPort
+              values:
+                - "8080"
+          matchActions:
+            - action: Override
+              argError: -1
